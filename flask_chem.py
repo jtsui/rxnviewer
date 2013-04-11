@@ -6,7 +6,6 @@ from indigo.indigo_renderer import *
 from indigo.indigo_inchi import *
 import json
 import pprint
-import time
 from operator import itemgetter
 from collections import defaultdict
 import sys
@@ -57,7 +56,6 @@ def generatePics(acc, output):
         output += 'Chemical: %s<br>Smiles: %s<br>Process: %s' % (line['chem'], substrate[0], line['proc'])
         output += '<br>===========================================<br>'
         i = 0
-        labels_i = []
         if products == []:
             output += '<br>No Products Found.<br>'
             continue
@@ -73,24 +71,27 @@ def generatePics(acc, output):
             reverse = prods['reverse']
 
             output += '<br><br>=> Forward - Applying ERO w/ chemical %s as substrate' % line['chem']
-            if forward == []:
+            if forward == [[]]:
                 output += '<br>No products found.<br>'
             else:
-                success = savePic(substrate, forward, i)
-                if success:
-                    output += '<br><img src=%s>' % url_for('static', filename='%s.png' % i)
-                    output += '<br>%s -> %s<br>' % (line['smiles'], ' + '.join(forward))
-                    i += 1
+                for rxn in forward:
+                    success = savePic(substrate, rxn, i)
+                    if success:
+                        output += '<br><img src=%s>' % url_for('static', filename='%s.png' % i)
+                        output += '<br>%s -> %s<br>' % (line['smiles'], ' + '.join(rxn))
+                        i += 1
             output += '<br><br><= Reverse - Applying ERO w/ chemical %s as product' % line['chem']
-            if reverse == []:
+            if reverse == [[]]:
                 output += '<br>No products found.<br>'
             else:
-                success = savePic(reverse, substrate, i)
-                if success:
-                    output += '<br><img src=%s>' % url_for('static', filename='%s.png' % i)
-                    output += '<br>%s -> %s<br>' % (' + '.join(reverse), line['smiles'])
-                    i += 1
+                for rxn in reverse:
+                    success = savePic(rxn, substrate, i)
+                    if success:
+                        output += '<br><img src=%s>' % url_for('static', filename='%s.png' % i)
+                        output += '<br>%s -> %s<br>' % (' + '.join(rxn), line['smiles'])
+                        i += 1
     return output
+
 
 @app.route('/')
 def root():

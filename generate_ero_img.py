@@ -1,14 +1,13 @@
 import pprint
 from pymongo import *
-from collections import defaultdict, Counter
 import progressbar
-import ujson
 from indigo.indigo import *
 from indigo.indigo_renderer import *
 
 pr = pprint.PrettyPrinter(indent=2)
 indigo = Indigo()
 renderer = IndigoRenderer(indigo)
+
 
 def savePic(query_reaction, file_name):
     output_path = "static/ero_%s.png" % file_name
@@ -39,4 +38,3 @@ for ero in ero_iter:
     i += 1
     bar.update(i)
 bar.finish()
-
