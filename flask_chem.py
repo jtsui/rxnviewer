@@ -98,7 +98,7 @@ def root():
     output = 'ERO Reaction Viewer for Genbank Data. Usage /view/accession_number.<br>'
     output += '<br>Accessions:<br>'
     for acc in accessions:
-        output += '<a href=%s>%s</a><br>' % ('%s%s' % (URL, acc), acc)
+        output += '<a href=%s%s>%s</a><br>' % (URL, acc, acc)
     return output
 
 
