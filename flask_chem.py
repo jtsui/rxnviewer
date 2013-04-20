@@ -16,7 +16,7 @@ renderer = IndigoRenderer(indigo)
 columns = ['acc', 'chem', 'smiles', 'products', 'proc', 'desc']
 input_file = 'data/ero_gbbct.csv'
 acc_line = defaultdict(list)
-URL = ''
+MYURL = ''
 
 # load entire csv into memory
 with open(input_file, 'rb') as f_in:
@@ -24,8 +24,9 @@ with open(input_file, 'rb') as f_in:
                             quoting=csv.QUOTE_MINIMAL,
                             fieldnames=columns)
     for line in reader:
+        if ' ' in line['acc'] or ',' in line['acc']:
+            continue
         acc_line[line['acc']].append(line)
-
 accessions = sorted(acc_line.keys())
 
 
@@ -98,18 +99,18 @@ def root():
     output = 'ERO Reaction Viewer for Genbank Data. Usage /view/accession_number.<br>'
     output += '<br>Accessions:<br>'
     for acc in accessions:
-        output += '<a href=%s%s>%s</a><br>' % (URL, acc, acc)
+        output += '<a href=%s%s>%s</a><br>' % (MYURL, acc, acc)
     return output
 
 
 @app.route('/view/<accession>')
 def pic(accession):
-    global URL
+    global MYURL
     lines = acc_line.get(accession, False)
     if lines is False:
         return 'No entry with accession: %s' % accession
     next_acc = accessions[(accessions.index(accession) + 1) % len(accessions)]
-    output = '<a href=%s>View next accession %s</a>' % ('%s%s' % (URL, next_acc), next_acc)
+    output = '<a href=%s%s>View next accession %s</a>' % (MYURL, next_acc, next_acc)
     output += '<br><br>Accession: %s<br>Description: %s<br>' % (accession, lines[0]['desc'])
     output = generatePics(accession, output)
     return output
@@ -117,9 +118,9 @@ def pic(accession):
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         the_file, myport = sys.argv
+        MYURL = 'http://pathway.berkeley.edu:27330/view/'
         app.run(host='0.0.0.0', port=int(myport))
-        URL = 'http://pathway.berkeley.edu:27330/view/'
     else:
-        URL = 'http://localhost:5000/view/'
+        MYURL = 'http://localhost:5000/view/'
         # debug=True will run with reloader enabled
         app.run(debug=True)
