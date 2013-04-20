@@ -2,3 +2,5 @@ static/
 data/
 *.sublime-project
 *.sublime-workspace
+*.sublime-project
+indigo/
