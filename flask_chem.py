@@ -13,7 +13,7 @@ import sys
 pr = pprint.PrettyPrinter(indent=2)
 indigo = Indigo()
 renderer = IndigoRenderer(indigo)
-columns = ['acc', 'chem', 'smiles', 'products', 'proc', 'desc']
+columns = ['acc', 'chem', 'smiles', 'products', 'proc', 'rxn_id', 'desc']
 input_file = 'data/ero_gbbct.csv'
 acc_line = defaultdict(list)
 MYURL = ''
@@ -60,11 +60,12 @@ def generatePics(acc, output):
         if products == []:
             output += '<br>No Products Found.<br>'
             continue
-        for prods, prob, ero_id in sorted(products, key=itemgetter(1), reverse=True):
+        for prods, prob, ero_id, rxn_id in sorted(products, key=itemgetter(1), reverse=True):
             output += '<br>-------------------------------'
             output += '<br>>>>>>>>>>>>>>>>>>'
             output += '<br>ERO: %s' % (ero_id)
             output += '<br>PROB: %s' % (prob)
+            output += '<br>RXN_ID: %s' % (rxn_id)
             output += '<br><img src=%s>' % url_for('static', filename='ero_%s.png' % ero_id)
             output += '<br><<<<<<<<<<<<<<<<<'
             output += '<br>-------------------------------'
@@ -111,8 +112,9 @@ def pic(accession):
         return 'No entry with accession: %s' % accession
     next_acc = accessions[(accessions.index(accession) + 1) % len(accessions)]
     output = '<a href=%s%s>View next accession %s</a>' % (MYURL, next_acc, next_acc)
-    output += '<br><br>Accession: %s<br>Description: %s<br>' % (accession, lines[0]['desc'])
-    output = generatePics(accession, output)
+    for line in lines:
+        output += '<br><br>Accession: %s<br>Description: %s<br>' % (accession, line['desc'])
+        output = generatePics(accession, output)
     return output
 
 if __name__ == '__main__':
