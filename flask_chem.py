@@ -13,7 +13,7 @@ import sys
 pr = pprint.PrettyPrinter(indent=2)
 indigo = Indigo()
 renderer = IndigoRenderer(indigo)
-columns = ['acc', 'chem', 'smiles', 'products', 'proc', 'rxn_id', 'desc']
+columns = ['acc', 'chem', 'smiles', 'products', 'proc', 'desc']
 input_file = 'data/ero_gbbct.csv'
 acc_line = defaultdict(list)
 MYURL = ''
